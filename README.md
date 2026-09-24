@@ -7,9 +7,9 @@ the loop.
 It exists because a thread claimed frontier coding agents do common
 refactorings "quite reliably", a reply said "quite reliably is not enough",
 and nobody had a number. Nobody had a number because nobody had a grader.
-This is the grader. The things it grades (an LLM through the API, a coding
-agent, a deterministic tool such as rope) come later and are not in this repo
-yet.
+This is the grader, plus the first two things it grades: Claude through the
+API, bare and with a refactoring skill. A coding agent run headless and a
+deterministic tool (rope) are the next arms and are not built yet.
 
 ## The oracle
 
@@ -75,16 +75,64 @@ cases/<refactoring>/<sample>/
 The whole `cases/` tree is frozen by `ro-freeze` into `cases.sha256`, and
 `ro-grade` refuses to run if it has drifted.
 
+## The arms
+
+An arm gets a fresh copy of a case's `before/` tree and the instruction,
+produces a candidate tree, and the oracle grades it. The arm is the only
+variable.
+
+| arm | what edits the code |
+| --- | --- |
+| `api-bare` | One Messages API call to `claude-sonnet-4-6`: a frozen system prompt, the instruction, every file in `before/`, and one forced `write_files` tool that returns the changed files whole |
+| `api-skill` | The same call with a skill from `skills/<refactoring>.md` prepended: a one-paragraph summary plus one before/after example, in the format Jason Gorman described |
+
+The prompt and the skills are hashed into every artifact's meta. `ro-run`
+runs each arm over each case N times, sequentially, copies `before/` per
+trial, applies the returned files, grades, keeps the unified diff, and rewrites
+the artifact after every trial so a killed run resumes. `--dry-run` swaps in a
+reference arm that copies `after/` and needs no key.
+
+## First run: two API arms, twelve cases, three runs each
+
+`runs/api-results.json`, 2026-09-24, 72 trials, $0.67 in total.
+
+| arm | pass | behavior | shape | collateral | compiles | per trial |
+| --- | --- | --- | --- | --- | --- | --- |
+| api-bare | 33/36 | 0 | 3 | 0 | 0 | $0.009, 4.1 s |
+| api-skill | 33/36 | 0 | 3 | 0 | 0 | $0.010, 4.2 s |
+
+Every case had the same outcome on all three runs, on both arms. Eleven of
+twelve cases passed every time, including the three refactorings rope cannot
+perform. No trial changed behavior, and no trial touched a file or function
+outside the instruction.
+
+The six misses are one case, `guard-clauses/discount-eligibility`, where both
+arms produced a byte-identical rewrite every run: the two guards first, then
+`if order_total >= 100:` with one nested `if coupon == "SAVE20"` inside. The
+tests pass and it is a reasonable guard-clause version. It fails the shape
+check because the instruction said no `if` may be nested inside another and
+the reference used a conditional expression instead. The oracle is right by
+the letter of the instruction; the constraint was stricter than the
+refactoring requires. The case stays frozen and both readings are reported.
+
+The skill changed nothing: same outcomes, same miss, about 200 more input
+tokens per call.
+
 ## Commands
 
 ```bash
 uv sync --group dev
+cp .env.example .env              # ANTHROPIC_API_KEY, only needed for live arms
 uv run pytest -q                  # oracle unit tests plus the selfcheck over every case
 uv run ro-selfcheck               # the same, as a table
 uv run ro-grade extract-function/parking-fee cases/extract-function/parking-fee/after
 uv run ro-grade extract-function/parking-fee cases/extract-function/parking-fee/before
 uv run ro-grade <case-id> <candidate-dir> --json
 uv run ro-freeze
+uv run ro-run --dry-run                          # reference arm, no network
+uv run ro-run --cases rename/csv-cleaner --runs 1 --out runs/smoke.json
+uv run ro-run --runs 3 --out runs/api-results.json
+uv run ro-run --report-only --out runs/api-results.json
 ```
 
 ## Shape assertion kinds
@@ -106,6 +154,12 @@ src/refactoring_oracle/collateral.py   byte, AST, and import comparisons
 src/refactoring_oracle/behavior.py     compile check and the pytest subprocess
 src/refactoring_oracle/oracle.py       grade() and the Verdict
 src/refactoring_oracle/freeze.py       hash of the cases tree
-src/refactoring_oracle/cli.py          ro-grade, ro-selfcheck, ro-freeze
+src/refactoring_oracle/cli.py          ro-grade, ro-selfcheck, ro-freeze, ro-run
+src/refactoring_oracle/prompts.py      the frozen system prompt, tool, and skill loading
+src/refactoring_oracle/arms/api.py     the two API arms and the dry-run reference arm
+src/refactoring_oracle/runner.py       trials, checkpointed artifact, summary
+src/refactoring_oracle/report.py       stdout tables
+skills/                                one Gorman-style skill per refactoring
+runs/                                  committed artifacts and captured output
 tests/                                 unit tests, selfcheck, house rules
 ```
