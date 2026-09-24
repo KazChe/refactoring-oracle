@@ -1,0 +1,287 @@
+{
+  "meta": {
+    "generated_at": "2026-09-24T06:20:35+00:00",
+    "updated_at": "2026-09-24T06:20:46+00:00",
+    "status": "complete",
+    "dry_run": false,
+    "git_commit": "1decfeaadceaa00ce2285e0ee0e1a5fbb454bacf",
+    "cases_sha256": "aad22de619bcafc3ff399728567b7bc399832d48cc289cf400130813686c4b77",
+    "cases_frozen": true,
+    "prompt_sha256": "4731e71ff709bcc11f056e0ebbe5ecc76977f4af6afc3fe03e021eedfff98f78",
+    "skills_sha256": "f7767d58150816ea7ef5e3b6455b5467013514d3ca22df554ac3eb4c98791e10",
+    "arms": [
+      "api-bare",
+      "api-skill"
+    ],
+    "runs_requested": 1,
+    "model": "claude-sonnet-4-6",
+    "temperature": "API default",
+    "concurrency": 1,
+    "case_ids": [
+      "rename/csv-cleaner"
+    ],
+    "versions": {
+      "python": "3.13.11",
+      "anthropic": "1.8.0",
+      "pydantic": "2.13.5",
+      "pytest": "9.1.1"
+    },
+    "pricing": {
+      "claude-sonnet-4-6": {
+        "usd_per_input_token": 3e-06,
+        "usd_per_output_token": 1.5e-05,
+        "usd_per_cache_write_token": 3.75e-06,
+        "usd_per_cache_read_token": 3e-07,
+        "source": "https://platform.claude.com/docs/en/about-claude/pricing",
+        "note": "$3 in, $15 out, $3.75 5m cache write, $0.30 cache read per MTok; read 2026-09-23"
+      }
+    }
+  },
+  "cases": {
+    "rename/csv-cleaner": {
+      "refactoring": "rename",
+      "deterministic_tool": "rope.refactor.rename.Rename",
+      "instruction": "In cleaner.py, rename the function clean_hdr to normalize_header, updating its definition and the call in clean_headers. Update tests/test_cleaner.py to use the new name. Change nothing else."
+    }
+  },
+  "trials": {
+    "api-bare/rename/csv-cleaner/0": {
+      "arm_name": "api-bare",
+      "case_id": "rename/csv-cleaner",
+      "run": 0,
+      "arm": {
+        "ok": true,
+        "latency_ms": 5004.306541988626,
+        "model": "claude-sonnet-4-6",
+        "request_id": "req_011CfMnF61x49pgGPq6rrqnv",
+        "input_tokens": 1295,
+        "output_tokens": 455,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "stop_reason": "tool_use",
+        "files_written": [
+          "cleaner.py",
+          "tests/test_cleaner.py"
+        ],
+        "error": null,
+        "extra": {}
+      },
+      "verdict": {
+        "case_id": "rename/csv-cleaner",
+        "candidate": "/Users/kam/development/git_clones/refactoring-oracle/runs/work/api-bare/rename/csv-cleaner/0",
+        "compiles": true,
+        "behavior": true,
+        "shape": true,
+        "collateral": true,
+        "overall": true,
+        "failure_class": "none",
+        "details": {
+          "compiles": {
+            "ok": true,
+            "errors": []
+          },
+          "behavior": {
+            "ok": true,
+            "summary": "2 passed in 0.03s",
+            "first_failure": null,
+            "returncode": 0,
+            "timed_out": false
+          },
+          "shape": [
+            {
+              "ok": true,
+              "message": "identifier clean_hdr absent",
+              "assertion": "name_absent cleaner.py name='clean_hdr'"
+            },
+            {
+              "ok": true,
+              "message": "normalize_header defined",
+              "assertion": "defines_function cleaner.py name='normalize_header' params=['raw']"
+            },
+            {
+              "ok": true,
+              "message": "clean_headers calls normalize_header",
+              "assertion": "calls cleaner.py callee='normalize_header' inside='clean_headers'"
+            }
+          ],
+          "collateral": []
+        }
+      },
+      "diff": "--- before/cleaner.py\n+++ candidate/cleaner.py\n@@ -3,7 +3,7 @@\n import re\n \n \n-def clean_hdr(raw):\n+def normalize_header(raw):\n     \"\"\"Lowercase, strip, and collapse runs of non-alphanumerics into one underscore.\"\"\"\n     text = raw.strip().lower()\n     text = re.sub(r\"[^a-z0-9]+\", \"_\", text)\n@@ -14,7 +14,7 @@\n     seen = {}\n     out = []\n     for raw in raw_headers:\n-        name = clean_hdr(raw)\n+        name = normalize_header(raw)\n         if name in seen:\n             seen[name] += 1\n             name = f\"{name}_{seen[name]}\"\n--- before/tests/test_cleaner.py\n+++ candidate/tests/test_cleaner.py\n@@ -1,10 +1,10 @@\n-from cleaner import clean_hdr, clean_headers\n+from cleaner import normalize_header, clean_headers\n \n \n def test_clean_hdr():\n-    assert clean_hdr(\"  Order ID \") == \"order_id\"\n-    assert clean_hdr(\"Price (USD)\") == \"price_usd\"\n-    assert clean_hdr(\"***\") == \"column\"\n+    assert normalize_header(\"  Order ID \") == \"order_id\"\n+    assert normalize_header(\"Price (USD)\") == \"price_usd\"\n+    assert normalize_header(\"***\") == \"column\"\n \n \n def test_duplicates_get_suffixes():\n"
+    },
+    "api-skill/rename/csv-cleaner/0": {
+      "arm_name": "api-skill",
+      "case_id": "rename/csv-cleaner",
+      "run": 0,
+      "arm": {
+        "ok": true,
+        "latency_ms": 5058.802042040043,
+        "model": "claude-sonnet-4-6",
+        "request_id": "req_011CfMnFU5zddxdCVJVhrxHM",
+        "input_tokens": 1507,
+        "output_tokens": 455,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "stop_reason": "tool_use",
+        "files_written": [
+          "cleaner.py",
+          "tests/test_cleaner.py"
+        ],
+        "error": null,
+        "extra": {}
+      },
+      "verdict": {
+        "case_id": "rename/csv-cleaner",
+        "candidate": "/Users/kam/development/git_clones/refactoring-oracle/runs/work/api-skill/rename/csv-cleaner/0",
+        "compiles": true,
+        "behavior": true,
+        "shape": true,
+        "collateral": true,
+        "overall": true,
+        "failure_class": "none",
+        "details": {
+          "compiles": {
+            "ok": true,
+            "errors": []
+          },
+          "behavior": {
+            "ok": true,
+            "summary": "2 passed in 0.03s",
+            "first_failure": null,
+            "returncode": 0,
+            "timed_out": false
+          },
+          "shape": [
+            {
+              "ok": true,
+              "message": "identifier clean_hdr absent",
+              "assertion": "name_absent cleaner.py name='clean_hdr'"
+            },
+            {
+              "ok": true,
+              "message": "normalize_header defined",
+              "assertion": "defines_function cleaner.py name='normalize_header' params=['raw']"
+            },
+            {
+              "ok": true,
+              "message": "clean_headers calls normalize_header",
+              "assertion": "calls cleaner.py callee='normalize_header' inside='clean_headers'"
+            }
+          ],
+          "collateral": []
+        }
+      },
+      "diff": "--- before/cleaner.py\n+++ candidate/cleaner.py\n@@ -3,7 +3,7 @@\n import re\n \n \n-def clean_hdr(raw):\n+def normalize_header(raw):\n     \"\"\"Lowercase, strip, and collapse runs of non-alphanumerics into one underscore.\"\"\"\n     text = raw.strip().lower()\n     text = re.sub(r\"[^a-z0-9]+\", \"_\", text)\n@@ -14,7 +14,7 @@\n     seen = {}\n     out = []\n     for raw in raw_headers:\n-        name = clean_hdr(raw)\n+        name = normalize_header(raw)\n         if name in seen:\n             seen[name] += 1\n             name = f\"{name}_{seen[name]}\"\n--- before/tests/test_cleaner.py\n+++ candidate/tests/test_cleaner.py\n@@ -1,10 +1,10 @@\n-from cleaner import clean_hdr, clean_headers\n+from cleaner import normalize_header, clean_headers\n \n \n def test_clean_hdr():\n-    assert clean_hdr(\"  Order ID \") == \"order_id\"\n-    assert clean_hdr(\"Price (USD)\") == \"price_usd\"\n-    assert clean_hdr(\"***\") == \"column\"\n+    assert normalize_header(\"  Order ID \") == \"order_id\"\n+    assert normalize_header(\"Price (USD)\") == \"price_usd\"\n+    assert normalize_header(\"***\") == \"column\"\n \n \n def test_duplicates_get_suffixes():\n"
+    }
+  },
+  "summary": {
+    "per_arm": {
+      "api-bare": {
+        "trials": 1,
+        "none": 1,
+        "compiles": 0,
+        "behavior": 0,
+        "shape": 0,
+        "collateral": 0,
+        "arm_error": 0,
+        "pass_rate": 1.0
+      },
+      "api-skill": {
+        "trials": 1,
+        "none": 1,
+        "compiles": 0,
+        "behavior": 0,
+        "shape": 0,
+        "collateral": 0,
+        "arm_error": 0,
+        "pass_rate": 1.0
+      }
+    },
+    "per_arm_refactoring": {
+      "api-bare": {
+        "rename": {
+          "trials": 1,
+          "none": 1,
+          "compiles": 0,
+          "behavior": 0,
+          "shape": 0,
+          "collateral": 0,
+          "arm_error": 0
+        }
+      },
+      "api-skill": {
+        "rename": {
+          "trials": 1,
+          "none": 1,
+          "compiles": 0,
+          "behavior": 0,
+          "shape": 0,
+          "collateral": 0,
+          "arm_error": 0
+        }
+      }
+    },
+    "per_arm_case": {
+      "api-bare": {
+        "rename/csv-cleaner": [
+          "none"
+        ]
+      },
+      "api-skill": {
+        "rename/csv-cleaner": [
+          "none"
+        ]
+      }
+    },
+    "repeatability": {
+      "api-bare": {
+        "cases": 1,
+        "same_outcome_every_run": 1,
+        "passed_every_run": 1,
+        "passed_at_least_once": 1
+      },
+      "api-skill": {
+        "cases": 1,
+        "same_outcome_every_run": 1,
+        "passed_every_run": 1,
+        "passed_at_least_once": 1
+      }
+    },
+    "usage": {
+      "api-bare": {
+        "input_tokens": 1295,
+        "output_tokens": 455,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "calls": 1,
+        "total_usd": 0.01071
+      },
+      "api-skill": {
+        "input_tokens": 1507,
+        "output_tokens": 455,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "calls": 1,
+        "total_usd": 0.011346
+      }
+    },
+    "cost_per_trial": {
+      "api-bare": 0.01071,
+      "api-skill": 0.011346
+    },
+    "latency": {
+      "api-bare": {
+        "mean": 5004.306541988626,
+        "median": 5004.306541988626,
+        "max": 5004.306541988626,
+        "n": 1
+      },
+      "api-skill": {
+        "mean": 5058.802042040043,
+        "median": 5058.802042040043,
+        "max": 5058.802042040043,
+        "n": 1
+      }
+    }
+  }
+}

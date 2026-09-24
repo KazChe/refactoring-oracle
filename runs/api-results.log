@@ -1,0 +1,40 @@
+refactoring-oracle run  status=complete  dry_run=False  model=claude-sonnet-4-6  runs=3
+  cases sha aad22de619bc  prompt sha 4731e71ff709  skills sha f7767d581508  commit 1decfeaadcea
+
+Per case, outcome of each run (pass, or the first failing check)
+case                                       tool              api-bare             api-skill
+-------------------------------------------------------------------------------------------
+extract-function/parking-fee               rope        pass/pass/pass        pass/pass/pass
+extract-function/shipping-quote            rope        pass/pass/pass        pass/pass/pass
+guard-clauses/discount-eligibility         -        shape/shape/shape     shape/shape/shape
+guard-clauses/ticket-refund                -           pass/pass/pass        pass/pass/pass
+inline-function/log-parser                 rope        pass/pass/pass        pass/pass/pass
+inline-function/loyalty-ledger             rope        pass/pass/pass        pass/pass/pass
+introduce-parameter-object/invoice-line    -           pass/pass/pass        pass/pass/pass
+introduce-parameter-object/room-booking    -           pass/pass/pass        pass/pass/pass
+rename/csv-cleaner                         rope        pass/pass/pass        pass/pass/pass
+rename/meeting-slots                       rope        pass/pass/pass        pass/pass/pass
+replace-magic-literal/late-fees            -           pass/pass/pass        pass/pass/pass
+replace-magic-literal/temperature-alerts   -           pass/pass/pass        pass/pass/pass
+
+Per arm
+  arm        trials   pass   comp    beh  shape   coll    err   pass rate
+  api-bare       36     33      0      0      3      0      0    91.7%
+  api-skill      36     33      0      0      3      0      0    91.7%
+
+Per arm and refactoring: pass / trials
+  refactoring                    api-bare   api-skill
+  extract-function                6/6         6/6    
+  guard-clauses                   3/6         3/6    
+  inline-function                 6/6         6/6    
+  introduce-parameter-object      6/6         6/6    
+  rename                          6/6         6/6    
+  replace-magic-literal           6/6         6/6    
+
+Repeatability (per case across runs)
+  api-bare   same outcome every run 12/12, passed every run 11/12, passed at least once 11/12
+  api-skill  same outcome every run 12/12, passed every run 11/12, passed at least once 11/12
+
+Cost and latency per trial
+  api-bare   $0.0090 per trial, $0.32 total over 36 calls; 48606 in / 11892 out tokens; mean 4,116 ms, max 6,031 ms
+  api-skill  $0.0097 per trial, $0.35 total over 36 calls; 56184 in / 12095 out tokens; mean 4,226 ms, max 6,104 ms
