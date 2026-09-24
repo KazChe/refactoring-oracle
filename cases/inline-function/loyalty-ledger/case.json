@@ -1,0 +1,37 @@
+{
+  "id": "inline-function/loyalty-ledger",
+  "refactoring": "inline-function",
+  "sample": "loyalty-ledger",
+  "instruction": "In loyalty.py, inline the module-level helper _points_for into its only caller Ledger.purchase, so the points calculation appears directly in purchase, and delete _points_for. Keep Ledger's public methods and behavior. Do not change Ledger.__init__, Ledger.redeem, or any other file.",
+  "allowed_files": [
+    "loyalty.py"
+  ],
+  "protected": [
+    "loyalty.py::Ledger.__init__",
+    "loyalty.py::Ledger.redeem"
+  ],
+  "allowed_imports": [],
+  "deterministic_tool": "rope.refactor.inline.InlineMethod",
+  "shape": [
+    {
+      "kind": "not_defines",
+      "in_file": "loyalty.py",
+      "name": "_points_for"
+    },
+    {
+      "kind": "no_call",
+      "in_file": "loyalty.py",
+      "callee": "_points_for"
+    },
+    {
+      "kind": "defines_function",
+      "in_file": "loyalty.py",
+      "name": "Ledger.purchase",
+      "params": [
+        "self",
+        "amount"
+      ]
+    }
+  ],
+  "notes": ""
+}

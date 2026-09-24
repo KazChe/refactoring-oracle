@@ -1,0 +1,49 @@
+{
+  "id": "replace-magic-literal/temperature-alerts",
+  "refactoring": "replace-magic-literal",
+  "sample": "temperature-alerts",
+  "instruction": "In alerts.py, replace the magic numbers in status with two module-level constants defined before status: CRITICAL_C = 85 and WARNING_C = 70, and use them in status in place of the literals. Keep status's signature and behavior. Do not change summarize or any other file.",
+  "allowed_files": [
+    "alerts.py"
+  ],
+  "protected": [
+    "alerts.py::summarize"
+  ],
+  "allowed_imports": [],
+  "deterministic_tool": null,
+  "shape": [
+    {
+      "kind": "defines_constant",
+      "in_file": "alerts.py",
+      "name": "CRITICAL_C",
+      "value": 85
+    },
+    {
+      "kind": "defines_constant",
+      "in_file": "alerts.py",
+      "name": "WARNING_C",
+      "value": 70
+    },
+    {
+      "kind": "no_literal",
+      "in_file": "alerts.py",
+      "value": 85,
+      "inside": "status"
+    },
+    {
+      "kind": "no_literal",
+      "in_file": "alerts.py",
+      "value": 70,
+      "inside": "status"
+    },
+    {
+      "kind": "defines_function",
+      "in_file": "alerts.py",
+      "name": "status",
+      "params": [
+        "celsius"
+      ]
+    }
+  ],
+  "notes": "rope's ExtractVariable extracts within the enclosing scope; it does not hoist a module-level constant."
+}

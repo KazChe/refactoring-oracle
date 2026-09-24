@@ -1,0 +1,53 @@
+{
+  "id": "introduce-parameter-object/invoice-line",
+  "refactoring": "introduce-parameter-object",
+  "sample": "invoice-line",
+  "instruction": "In invoice.py, introduce a dataclass Line with fields unit_price: float, quantity: int, discount_pct: float (in that order), and change line_total(unit_price, quantity, discount_pct) to line_total(line) taking one Line. invoice_total now receives a list of Line objects. describe keeps its signature describe(unit_price, quantity, discount_pct) and builds a Line to call line_total. Update tests/test_invoice.py to construct Line objects. Change nothing else.",
+  "allowed_files": [
+    "invoice.py",
+    "tests/test_invoice.py"
+  ],
+  "protected": [],
+  "allowed_imports": [
+    "dataclasses"
+  ],
+  "deterministic_tool": null,
+  "shape": [
+    {
+      "kind": "defines_class",
+      "in_file": "invoice.py",
+      "name": "Line",
+      "dataclass": true,
+      "fields": [
+        "unit_price",
+        "quantity",
+        "discount_pct"
+      ]
+    },
+    {
+      "kind": "defines_function",
+      "in_file": "invoice.py",
+      "name": "line_total",
+      "params": [
+        "line"
+      ]
+    },
+    {
+      "kind": "defines_function",
+      "in_file": "invoice.py",
+      "name": "describe",
+      "params": [
+        "unit_price",
+        "quantity",
+        "discount_pct"
+      ]
+    },
+    {
+      "kind": "calls",
+      "in_file": "invoice.py",
+      "callee": "line_total",
+      "inside": "describe"
+    }
+  ],
+  "notes": "rope has introduce_parameter (a single parameter), not a parameter object."
+}

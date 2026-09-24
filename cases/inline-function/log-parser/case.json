@@ -1,0 +1,35 @@
+{
+  "id": "inline-function/log-parser",
+  "refactoring": "inline-function",
+  "sample": "log-parser",
+  "instruction": "In logparse.py, inline the helper _is_level into its only caller parse_line, so the membership test appears directly in parse_line, and delete _is_level. Keep parse_line's signature and behavior. Do not change count_levels or any other file.",
+  "allowed_files": [
+    "logparse.py"
+  ],
+  "protected": [
+    "logparse.py::count_levels"
+  ],
+  "allowed_imports": [],
+  "deterministic_tool": "rope.refactor.inline.InlineMethod",
+  "shape": [
+    {
+      "kind": "not_defines",
+      "in_file": "logparse.py",
+      "name": "_is_level"
+    },
+    {
+      "kind": "no_call",
+      "in_file": "logparse.py",
+      "callee": "_is_level"
+    },
+    {
+      "kind": "defines_function",
+      "in_file": "logparse.py",
+      "name": "parse_line",
+      "params": [
+        "line"
+      ]
+    }
+  ],
+  "notes": ""
+}

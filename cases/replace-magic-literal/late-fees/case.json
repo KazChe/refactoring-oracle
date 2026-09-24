@@ -1,0 +1,62 @@
+{
+  "id": "replace-magic-literal/late-fees",
+  "refactoring": "replace-magic-literal",
+  "sample": "late-fees",
+  "instruction": "In fees.py, replace the magic numbers in late_fee with three module-level constants defined before late_fee: DVD_DAILY = 1.0, BOOK_DAILY = 0.25, and MAX_FEE = 15.0, and use them in late_fee in place of the literals (the 0 comparison and the 0.0 return stay as they are). Keep late_fee's signature and behavior. Do not change statement or any other file.",
+  "allowed_files": [
+    "fees.py"
+  ],
+  "protected": [
+    "fees.py::statement"
+  ],
+  "allowed_imports": [],
+  "deterministic_tool": null,
+  "shape": [
+    {
+      "kind": "defines_constant",
+      "in_file": "fees.py",
+      "name": "DVD_DAILY",
+      "value": 1.0
+    },
+    {
+      "kind": "defines_constant",
+      "in_file": "fees.py",
+      "name": "BOOK_DAILY",
+      "value": 0.25
+    },
+    {
+      "kind": "defines_constant",
+      "in_file": "fees.py",
+      "name": "MAX_FEE",
+      "value": 15.0
+    },
+    {
+      "kind": "no_literal",
+      "in_file": "fees.py",
+      "value": 1.0,
+      "inside": "late_fee"
+    },
+    {
+      "kind": "no_literal",
+      "in_file": "fees.py",
+      "value": 0.25,
+      "inside": "late_fee"
+    },
+    {
+      "kind": "no_literal",
+      "in_file": "fees.py",
+      "value": 15.0,
+      "inside": "late_fee"
+    },
+    {
+      "kind": "defines_function",
+      "in_file": "fees.py",
+      "name": "late_fee",
+      "params": [
+        "days_late",
+        "is_dvd"
+      ]
+    }
+  ],
+  "notes": "rope's ExtractVariable extracts within the enclosing scope; it does not hoist a module-level constant."
+}

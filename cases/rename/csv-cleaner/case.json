@@ -1,0 +1,35 @@
+{
+  "id": "rename/csv-cleaner",
+  "refactoring": "rename",
+  "sample": "csv-cleaner",
+  "instruction": "In cleaner.py, rename the function clean_hdr to normalize_header, updating its definition and the call in clean_headers. Update tests/test_cleaner.py to use the new name. Change nothing else.",
+  "allowed_files": [
+    "cleaner.py",
+    "tests/test_cleaner.py"
+  ],
+  "protected": [],
+  "allowed_imports": [],
+  "deterministic_tool": "rope.refactor.rename.Rename",
+  "shape": [
+    {
+      "kind": "name_absent",
+      "in_file": "cleaner.py",
+      "name": "clean_hdr"
+    },
+    {
+      "kind": "defines_function",
+      "in_file": "cleaner.py",
+      "name": "normalize_header",
+      "params": [
+        "raw"
+      ]
+    },
+    {
+      "kind": "calls",
+      "in_file": "cleaner.py",
+      "callee": "normalize_header",
+      "inside": "clean_headers"
+    }
+  ],
+  "notes": ""
+}

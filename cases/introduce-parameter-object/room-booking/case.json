@@ -1,0 +1,54 @@
+{
+  "id": "introduce-parameter-object/room-booking",
+  "refactoring": "introduce-parameter-object",
+  "sample": "room-booking",
+  "instruction": "In booking.py, introduce a dataclass Stay with fields room_type: str, nights: int, guests: int, breakfast: bool (in that order), and change quote(room_type, nights, guests, breakfast) to quote(stay) taking one Stay. cheapest keeps its signature cheapest(nights, guests, breakfast) and builds a Stay for each room it compares. Update tests/test_booking.py to construct Stay objects. Change nothing else.",
+  "allowed_files": [
+    "booking.py",
+    "tests/test_booking.py"
+  ],
+  "protected": [],
+  "allowed_imports": [
+    "dataclasses"
+  ],
+  "deterministic_tool": null,
+  "shape": [
+    {
+      "kind": "defines_class",
+      "in_file": "booking.py",
+      "name": "Stay",
+      "dataclass": true,
+      "fields": [
+        "room_type",
+        "nights",
+        "guests",
+        "breakfast"
+      ]
+    },
+    {
+      "kind": "defines_function",
+      "in_file": "booking.py",
+      "name": "quote",
+      "params": [
+        "stay"
+      ]
+    },
+    {
+      "kind": "defines_function",
+      "in_file": "booking.py",
+      "name": "cheapest",
+      "params": [
+        "nights",
+        "guests",
+        "breakfast"
+      ]
+    },
+    {
+      "kind": "calls",
+      "in_file": "booking.py",
+      "callee": "quote",
+      "inside": "cheapest"
+    }
+  ],
+  "notes": "rope has introduce_parameter (a single parameter), not a parameter object."
+}

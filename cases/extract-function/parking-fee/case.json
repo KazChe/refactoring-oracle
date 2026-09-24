@@ -1,0 +1,41 @@
+{
+  "id": "extract-function/parking-fee",
+  "refactoring": "extract-function",
+  "sample": "parking-fee",
+  "instruction": "In parking.py, extract the evening discount step of fee into a new module-level function evening_discount(base, entered_hour) that returns the discounted amount when the entry hour is 18 or later or before 6, and base unchanged otherwise. fee must call evening_discount and keep its signature fee(minutes, entered_hour) and its behavior. Do not change receipt or any other file.",
+  "allowed_files": [
+    "parking.py"
+  ],
+  "protected": [
+    "parking.py::receipt"
+  ],
+  "allowed_imports": [],
+  "deterministic_tool": "rope.refactor.extract.ExtractMethod",
+  "shape": [
+    {
+      "kind": "defines_function",
+      "in_file": "parking.py",
+      "name": "evening_discount",
+      "params": [
+        "base",
+        "entered_hour"
+      ]
+    },
+    {
+      "kind": "calls",
+      "in_file": "parking.py",
+      "callee": "evening_discount",
+      "inside": "fee"
+    },
+    {
+      "kind": "defines_function",
+      "in_file": "parking.py",
+      "name": "fee",
+      "params": [
+        "minutes",
+        "entered_hour"
+      ]
+    }
+  ],
+  "notes": ""
+}

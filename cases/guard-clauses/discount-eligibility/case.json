@@ -1,0 +1,38 @@
+{
+  "id": "guard-clauses/discount-eligibility",
+  "refactoring": "guard-clauses",
+  "sample": "discount-eligibility",
+  "instruction": "In discount.py, rewrite discount_rate using guard clauses: return 0.0 immediately when customer is None, then return 0.0 immediately when the customer is not active, then handle the remaining cases with early returns so that no if statement is nested inside another if. The first statement of the function must be a guard. Keep the signature discount_rate(customer, order_total, coupon) and the exact behavior. Do not change final_price or any other file.",
+  "allowed_files": [
+    "discount.py"
+  ],
+  "protected": [
+    "discount.py::final_price"
+  ],
+  "allowed_imports": [],
+  "deterministic_tool": null,
+  "shape": [
+    {
+      "kind": "starts_with_guard",
+      "in_file": "discount.py",
+      "inside": "discount_rate"
+    },
+    {
+      "kind": "max_if_depth",
+      "in_file": "discount.py",
+      "inside": "discount_rate",
+      "n": 1
+    },
+    {
+      "kind": "defines_function",
+      "in_file": "discount.py",
+      "name": "discount_rate",
+      "params": [
+        "customer",
+        "order_total",
+        "coupon"
+      ]
+    }
+  ],
+  "notes": "No rope refactoring inverts control flow."
+}

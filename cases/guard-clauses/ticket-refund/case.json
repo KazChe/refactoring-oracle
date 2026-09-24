@@ -1,0 +1,37 @@
+{
+  "id": "guard-clauses/ticket-refund",
+  "refactoring": "guard-clauses",
+  "sample": "ticket-refund",
+  "instruction": "In refund.py, rewrite refund_amount using guard clauses: return 0.0 immediately when ticket is None, then return 0.0 immediately when the ticket is used, then handle the remaining cases with early returns so that no if statement is nested inside another if. The first statement of the function must be a guard. Keep the signature refund_amount(ticket, days_before_event) and the exact behavior. Do not change refund_message or any other file.",
+  "allowed_files": [
+    "refund.py"
+  ],
+  "protected": [
+    "refund.py::refund_message"
+  ],
+  "allowed_imports": [],
+  "deterministic_tool": null,
+  "shape": [
+    {
+      "kind": "starts_with_guard",
+      "in_file": "refund.py",
+      "inside": "refund_amount"
+    },
+    {
+      "kind": "max_if_depth",
+      "in_file": "refund.py",
+      "inside": "refund_amount",
+      "n": 1
+    },
+    {
+      "kind": "defines_function",
+      "in_file": "refund.py",
+      "name": "refund_amount",
+      "params": [
+        "ticket",
+        "days_before_event"
+      ]
+    }
+  ],
+  "notes": "No rope refactoring inverts control flow."
+}

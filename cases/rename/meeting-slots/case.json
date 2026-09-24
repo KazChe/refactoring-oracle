@@ -1,0 +1,50 @@
+{
+  "id": "rename/meeting-slots",
+  "refactoring": "rename",
+  "sample": "meeting-slots",
+  "instruction": "In slots.py, rename the function find_gaps to free_slots, and rename the parameter min_len to min_minutes in both find_gaps and first_gap, updating every use including the docstring and the call in first_gap. Update tests/test_slots.py to use the new names. Change nothing else.",
+  "allowed_files": [
+    "slots.py",
+    "tests/test_slots.py"
+  ],
+  "protected": [],
+  "allowed_imports": [],
+  "deterministic_tool": "rope.refactor.rename.Rename",
+  "shape": [
+    {
+      "kind": "name_absent",
+      "in_file": "slots.py",
+      "name": "find_gaps"
+    },
+    {
+      "kind": "name_absent",
+      "in_file": "slots.py",
+      "name": "min_len"
+    },
+    {
+      "kind": "defines_function",
+      "in_file": "slots.py",
+      "name": "free_slots",
+      "params": [
+        "busy",
+        "min_minutes"
+      ]
+    },
+    {
+      "kind": "defines_function",
+      "in_file": "slots.py",
+      "name": "first_gap",
+      "params": [
+        "busy",
+        "min_minutes"
+      ]
+    },
+    {
+      "kind": "calls",
+      "in_file": "slots.py",
+      "callee": "free_slots",
+      "inside": "first_gap"
+    }
+  ],
+  "notes": ""
+}

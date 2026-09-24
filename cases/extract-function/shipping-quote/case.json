@@ -1,0 +1,42 @@
+{
+  "id": "extract-function/shipping-quote",
+  "refactoring": "extract-function",
+  "sample": "shipping-quote",
+  "instruction": "In shipping.py, extract the two input checks at the top of quote (the unknown zone check and the positive weight check, in that order, with the same messages) into a new module-level function validate(weight_kg, zone) that returns None, and call it as the first statement of quote. Keep quote's signature and behavior. Do not change label or any other file.",
+  "allowed_files": [
+    "shipping.py"
+  ],
+  "protected": [
+    "shipping.py::label"
+  ],
+  "allowed_imports": [],
+  "deterministic_tool": "rope.refactor.extract.ExtractMethod",
+  "shape": [
+    {
+      "kind": "defines_function",
+      "in_file": "shipping.py",
+      "name": "validate",
+      "params": [
+        "weight_kg",
+        "zone"
+      ]
+    },
+    {
+      "kind": "calls",
+      "in_file": "shipping.py",
+      "callee": "validate",
+      "inside": "quote"
+    },
+    {
+      "kind": "defines_function",
+      "in_file": "shipping.py",
+      "name": "quote",
+      "params": [
+        "weight_kg",
+        "zone",
+        "express"
+      ]
+    }
+  ],
+  "notes": ""
+}
