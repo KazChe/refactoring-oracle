@@ -87,7 +87,7 @@ variable.
 | `api-skill` | The same call with the case's skill prepended to the system prompt |
 | `agent-bare` | Claude Code, `claude -p`, run inside a copy of `before/` with `--bare` (no global CLAUDE.md, memory, hooks, or plugins), `acceptEdits`, a $1 budget per trial, and JSON output. It can read the tree, run the before tests, and edit in place |
 | `agent-skill` | The same, with the case's skill appended to the system prompt through `--append-system-prompt-file` |
-| `rope` | `rope.refactor` driven by per-case offset specs in `arms/rope_arm.py`, for the three refactorings rope implements. The other three are reported as `unsupported` |
+| `rope` | `rope.refactor` driven by per-case offset specs in `arms/rope_arm.py`, for the three refactorings rope implements: Rename, InlineMethod, and ExtractMethod followed by ChangeSignature to put the parameters in the order the instruction named. The other three refactorings are reported as `unsupported`, which is coverage, not a miss |
 
 ### Skills
 
@@ -133,7 +133,8 @@ reference arm that copies `after/` and needs no key.
 ## Results: five arms, twelve cases, three runs each
 
 Artifacts in `runs/`: `api-results.json`, `agent-results.json`,
-`rope-results.json`, all from 2026-09-24. Model `claude-sonnet-4-6` for the
+`rope-results-v2.json` (and `rope-results.json`, the first rope run, see
+below), all from 2026-09-24. Model `claude-sonnet-4-6` for the
 four model arms. Every trial starts from a fresh copy of `before/`.
 
 | arm | pass | behavior | shape | collateral | compiles | unsupported | per trial | total |
@@ -142,7 +143,8 @@ four model arms. Every trial starts from a fresh copy of `before/`.
 | api-skill | 33/36 | 0 | 3 | 0 | 0 | 0 | $0.010, 4.2 s | $0.35 |
 | agent-bare | 36/36 | 0 | 0 | 0 | 0 | 0 | $0.028, 19 s, 5.4 turns | $1.00 |
 | agent-skill | 35/36 | 0 | 1 | 0 | 0 | 0 | $0.028, 21 s, 5.2 turns | $1.00 |
-| rope | 4/12 | 2 | 0 | 0 | 0 | 6 | free, instant | $0 |
+| rope, within its coverage | 6/6 | 0 | 0 | 0 | 0 | | free, instant | $0 |
+| rope, coverage of the catalog | 6/12 | | | | | 6 | | |
 
 Across 144 model trials: zero behavior changes, zero files or functions
 touched outside the instruction, zero compile errors. Every miss by a model
@@ -168,13 +170,22 @@ rewrite missed the constraint every time and the agent met it every time.
 The agent can read the whole tree, run the before tests, and revise; it used
 about five turns per case and cost three times as much.
 
-**The deterministic tool.** rope passed both renames and both inlines. On
-both extract cases it produced a working function with the parameters in the
-order it chose, `evening_discount(entered_hour, base)` and
-`validate(zone, weight_kg)`, not the order the instruction named, so the
-held-out tests that call the new function positionally fail. rope cannot be
-told the target interface. The other six cases (parameter object, magic
-literal, guard clauses) have no rope refactoring at all.
+**The deterministic tool.** Within what it implements, rope is perfect: both
+renames, both inlines, both extracts. It is reported as two numbers on
+purpose, because pooling them into 6 of 12 would score rope on the catalog I
+chose rather than on its work. The other six cases (parameter object, magic
+literal, guard clauses) have no rope refactoring at all; that is the
+coverage number.
+
+Two things about how rope was driven. It takes offsets and refactoring
+classes, not an instruction, so a person wrote a spec per case, and the
+comparison is "rope, driven by someone who read the instruction." And the
+first rope run (`runs/rope-results.json`) scored 4 of 6, because
+ExtractMethod chooses its own parameter order, `evening_discount(entered_hour,
+base)` and `validate(zone, weight_kg)`, and offers no way to set it; the
+held-out tests call the new function in the instruction's order. Adding the
+step a person would take next, ChangeSignature with the named order, is what
+the v2 specs do. Both artifacts are kept.
 
 What this is not: twelve cases, one model, small files, and instructions
 written to be gradable. It is a shape, not a benchmark.
