@@ -13,7 +13,7 @@ from pathlib import Path
 from refactoring_oracle.case import Case
 from refactoring_oracle.shape import _defs, parse
 
-SKIP_DIRS = {"__pycache__", ".pytest_cache", ".ruff_cache", ".git"}
+SKIP_DIRS = {"__pycache__", ".pytest_cache", ".ruff_cache", ".git", ".claude"}
 
 
 def _files(root: Path) -> dict[str, Path]:

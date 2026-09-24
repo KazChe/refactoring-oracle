@@ -1,0 +1,208 @@
+{
+  "meta": {
+    "generated_at": "2026-09-24T07:08:00+00:00",
+    "updated_at": "2026-09-24T07:09:29+00:00",
+    "status": "complete",
+    "dry_run": false,
+    "git_commit": "0abf5e6e16144d6e519e8e80dac5abf9b4558905",
+    "cases_sha256": "aad22de619bcafc3ff399728567b7bc399832d48cc289cf400130813686c4b77",
+    "cases_frozen": true,
+    "prompt_sha256": "4731e71ff709bcc11f056e0ebbe5ecc76977f4af6afc3fe03e021eedfff98f78",
+    "skills_sha256": "f7767d58150816ea7ef5e3b6455b5467013514d3ca22df554ac3eb4c98791e10",
+    "arms": [
+      "agent-bare"
+    ],
+    "runs_requested": 1,
+    "model": "claude-sonnet-4-6",
+    "temperature": "API default",
+    "concurrency": 1,
+    "case_ids": [
+      "rename/csv-cleaner"
+    ],
+    "versions": {
+      "python": "3.13.11",
+      "anthropic": "1.8.0",
+      "pydantic": "2.13.5",
+      "pytest": "9.1.1"
+    },
+    "pricing": {
+      "claude-sonnet-4-6": {
+        "usd_per_input_token": 3e-06,
+        "usd_per_output_token": 1.5e-05,
+        "usd_per_cache_write_token": 3.75e-06,
+        "usd_per_cache_read_token": 3e-07,
+        "source": "https://platform.claude.com/docs/en/about-claude/pricing",
+        "note": "$3 in, $15 out, $3.75 5m cache write, $0.30 cache read per MTok; read 2026-09-23"
+      }
+    }
+  },
+  "cases": {
+    "rename/csv-cleaner": {
+      "refactoring": "rename",
+      "deterministic_tool": "rope.refactor.rename.Rename",
+      "instruction": "In cleaner.py, rename the function clean_hdr to normalize_header, updating its definition and the call in clean_headers. Update tests/test_cleaner.py to use the new name. Change nothing else."
+    }
+  },
+  "trials": {
+    "agent-bare/rename/csv-cleaner/0": {
+      "arm_name": "agent-bare",
+      "case_id": "rename/csv-cleaner",
+      "run": 0,
+      "arm": {
+        "ok": true,
+        "latency_ms": 38887.78220792301,
+        "model": "claude-sonnet-4-6",
+        "request_id": "84069000-e32c-4599-b564-5b8ec3897a1a",
+        "input_tokens": 8,
+        "output_tokens": 1033,
+        "cache_creation_input_tokens": 3578,
+        "cache_read_input_tokens": 14016,
+        "stop_reason": "success",
+        "files_written": [],
+        "error": null,
+        "extra": {
+          "returncode": 0,
+          "total_cost_usd": 0.0342973,
+          "num_turns": 7,
+          "duration_ms": 34875,
+          "duration_api_ms": 35995,
+          "is_error": false,
+          "result_text": "All tests pass. Here's a summary of the three changes made:\n\n1. **`cleaner.py`** — renamed the function definition from `clean_hdr` to `normalize_header`.\n2. **`cleaner.py`** — updated the call site inside `clean_headers` from `clean_hdr(raw)` to `normalize_header(raw)`.\n3. **`tests/test_cleaner.py`** — updated the import, the test function name (`test_clean_hdr` → `test_normalize_header`), and all three call sites within it to use `normalize_header`.",
+          "model_usage": {
+            "claude-haiku-4-5-20251001": {
+              "inputTokens": 1066,
+              "outputTokens": 18,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0,
+              "webSearchRequests": 0,
+              "costUSD": 0.0011560000000000001,
+              "contextWindow": 200000,
+              "maxOutputTokens": 32000,
+              "canonicalModel": "claude-haiku-4-5",
+              "provider": "firstParty"
+            },
+            "claude-sonnet-4-6": {
+              "inputTokens": 8,
+              "outputTokens": 1033,
+              "cacheReadInputTokens": 14016,
+              "cacheCreationInputTokens": 3578,
+              "webSearchRequests": 0,
+              "costUSD": 0.0331413,
+              "contextWindow": 200000,
+              "maxOutputTokens": 32000,
+              "canonicalModel": "claude-sonnet-4-6",
+              "provider": "firstParty"
+            }
+          }
+        }
+      },
+      "verdict": {
+        "case_id": "rename/csv-cleaner",
+        "candidate": "/Users/kam/development/git_clones/refactoring-oracle/runs/work/agent-bare/rename/csv-cleaner/0",
+        "compiles": true,
+        "behavior": true,
+        "shape": true,
+        "collateral": true,
+        "overall": true,
+        "failure_class": "none",
+        "details": {
+          "compiles": {
+            "ok": true,
+            "errors": []
+          },
+          "behavior": {
+            "ok": true,
+            "summary": "2 passed in 0.03s",
+            "first_failure": null,
+            "returncode": 0,
+            "timed_out": false
+          },
+          "shape": [
+            {
+              "ok": true,
+              "message": "identifier clean_hdr absent",
+              "assertion": "name_absent cleaner.py name='clean_hdr'"
+            },
+            {
+              "ok": true,
+              "message": "normalize_header defined",
+              "assertion": "defines_function cleaner.py name='normalize_header' params=['raw']"
+            },
+            {
+              "ok": true,
+              "message": "clean_headers calls normalize_header",
+              "assertion": "calls cleaner.py callee='normalize_header' inside='clean_headers'"
+            }
+          ],
+          "collateral": []
+        }
+      },
+      "diff": "--- before/cleaner.py\n+++ candidate/cleaner.py\n@@ -3,7 +3,7 @@\n import re\n \n \n-def clean_hdr(raw):\n+def normalize_header(raw):\n     \"\"\"Lowercase, strip, and collapse runs of non-alphanumerics into one underscore.\"\"\"\n     text = raw.strip().lower()\n     text = re.sub(r\"[^a-z0-9]+\", \"_\", text)\n@@ -14,7 +14,7 @@\n     seen = {}\n     out = []\n     for raw in raw_headers:\n-        name = clean_hdr(raw)\n+        name = normalize_header(raw)\n         if name in seen:\n             seen[name] += 1\n             name = f\"{name}_{seen[name]}\"\n--- before/tests/test_cleaner.py\n+++ candidate/tests/test_cleaner.py\n@@ -1,10 +1,10 @@\n-from cleaner import clean_hdr, clean_headers\n+from cleaner import normalize_header, clean_headers\n \n \n-def test_clean_hdr():\n-    assert clean_hdr(\"  Order ID \") == \"order_id\"\n-    assert clean_hdr(\"Price (USD)\") == \"price_usd\"\n-    assert clean_hdr(\"***\") == \"column\"\n+def test_normalize_header():\n+    assert normalize_header(\"  Order ID \") == \"order_id\"\n+    assert normalize_header(\"Price (USD)\") == \"price_usd\"\n+    assert normalize_header(\"***\") == \"column\"\n \n \n def test_duplicates_get_suffixes():\n"
+    }
+  },
+  "summary": {
+    "per_arm": {
+      "agent-bare": {
+        "trials": 1,
+        "none": 1,
+        "compiles": 0,
+        "behavior": 0,
+        "shape": 0,
+        "collateral": 0,
+        "arm_error": 0,
+        "pass_rate": 1.0
+      }
+    },
+    "per_arm_refactoring": {
+      "agent-bare": {
+        "rename": {
+          "trials": 1,
+          "none": 1,
+          "compiles": 0,
+          "behavior": 0,
+          "shape": 0,
+          "collateral": 0,
+          "arm_error": 0
+        }
+      }
+    },
+    "per_arm_case": {
+      "agent-bare": {
+        "rename/csv-cleaner": [
+          "none"
+        ]
+      }
+    },
+    "repeatability": {
+      "agent-bare": {
+        "cases": 1,
+        "same_outcome_every_run": 1,
+        "passed_every_run": 1,
+        "passed_at_least_once": 1
+      }
+    },
+    "usage": {
+      "agent-bare": {
+        "input_tokens": 8,
+        "output_tokens": 1033,
+        "cache_creation_input_tokens": 3578,
+        "cache_read_input_tokens": 14016,
+        "calls": 1,
+        "mean_turns": 7.0,
+        "total_usd": 0.0342973,
+        "cost_source": "claude --output-format json total_cost_usd"
+      }
+    },
+    "cost_per_trial": {
+      "agent-bare": 0.0342973
+    },
+    "latency": {
+      "agent-bare": {
+        "mean": 38887.78220792301,
+        "median": 38887.78220792301,
+        "max": 38887.78220792301,
+        "n": 1
+      }
+    }
+  }
+}

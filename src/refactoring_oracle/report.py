@@ -69,6 +69,7 @@ def render(artifact: dict[str, Any]) -> str:
         cost = "n/a" if c is None else f"${c:.4f}"
         total = f"${u['total_usd']:.2f}" if "total_usd" in u else "n/a"
         lt = "n/a" if not lat else f"mean {lat['mean']:,.0f} ms, max {lat['max']:,.0f} ms"
-        w(f"  {a:10} {cost} per trial, {total} total over {u.get('calls', 0)} calls; "
-          f"{u.get('input_tokens', 0)} in / {u.get('output_tokens', 0)} out tokens; {lt}")
+        turns = f"; mean turns {u['mean_turns']:.1f}" if "mean_turns" in u else ""
+        w(f"  {a:11} {cost} per trial, {total} total over {u.get('calls', 0)} calls; "
+          f"{u.get('input_tokens', 0)} in / {u.get('output_tokens', 0)} out tokens; {lt}{turns}")
     return "\n".join(out) + "\n"

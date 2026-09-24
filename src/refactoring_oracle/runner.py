@@ -112,6 +112,10 @@ def make_arms(cfg: RunConfig) -> dict[str, Arm]:
             out[name] = ApiArm(with_skill=False, model=cfg.model)
         elif name == "api-skill":
             out[name] = ApiArm(with_skill=True, model=cfg.model)
+        elif name in ("agent-bare", "agent-skill"):
+            from refactoring_oracle.arms.agent import AgentArm
+
+            out[name] = AgentArm(with_skill=name == "agent-skill", model=cfg.model)
         else:
             raise ValueError(f"unknown arm {name!r}")
     return out
@@ -245,7 +249,18 @@ def summarize(artifact: dict[str, Any]) -> dict[str, Any]:
                       "cache_read_input_tokens"):
                 usage[k] = usage.get(k, 0) + (a.get(k) or 0)
         summary["usage"][arm] = {**usage, "calls": n_calls}
-        if pricing and n_calls:
+        reported = [t["arm"].get("extra", {}).get("total_cost_usd") for t in mine
+                    if t["arm"].get("input_tokens") is not None]
+        turns = [t["arm"].get("extra", {}).get("num_turns") for t in mine
+                 if t["arm"].get("extra", {}).get("num_turns") is not None]
+        if turns:
+            summary["usage"][arm]["mean_turns"] = sum(turns) / len(turns)
+        if reported and all(r is not None for r in reported):
+            total = float(sum(reported))
+            summary["cost_per_trial"][arm] = total / len(reported)
+            summary["usage"][arm]["total_usd"] = total
+            summary["usage"][arm]["cost_source"] = "claude --output-format json total_cost_usd"
+        elif pricing and n_calls:
             total = (
                 usage.get("input_tokens", 0) * pricing["usd_per_input_token"]
                 + usage.get("output_tokens", 0) * pricing["usd_per_output_token"]
