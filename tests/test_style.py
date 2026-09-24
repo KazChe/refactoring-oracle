@@ -20,7 +20,11 @@ def tracked_text_files() -> list[Path]:
         cwd=REPO, capture_output=True, text=True, check=True,
     ).stdout.split("\n")
     files = [REPO / line for line in out if line]
-    return [p for p in files if p.suffix in TEXT_SUFFIXES and p.is_file()]
+    # runs/ holds model output verbatim; it is data, not prose.
+    return [
+        p for p in files
+        if p.suffix in TEXT_SUFFIXES and p.is_file() and "runs" not in p.relative_to(REPO).parts
+    ]
 
 
 def test_no_em_dashes() -> None:

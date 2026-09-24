@@ -9,6 +9,7 @@ dependencies = [
     "pydantic>=2.12",
     "pytest>=8.0",
     "anthropic==1.8.0",
+    "rope==1.14.0",
 ]
 
 [dependency-groups]

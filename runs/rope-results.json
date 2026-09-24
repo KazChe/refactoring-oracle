@@ -1,0 +1,827 @@
+{
+  "meta": {
+    "generated_at": "2026-09-24T07:11:54+00:00",
+    "updated_at": "2026-09-24T07:11:55+00:00",
+    "status": "complete",
+    "dry_run": false,
+    "git_commit": "8c9eb6252150aa9ac27765d41765e105c43f0a60",
+    "cases_sha256": "aad22de619bcafc3ff399728567b7bc399832d48cc289cf400130813686c4b77",
+    "cases_frozen": true,
+    "prompt_sha256": "4731e71ff709bcc11f056e0ebbe5ecc76977f4af6afc3fe03e021eedfff98f78",
+    "skills_sha256": "f7767d58150816ea7ef5e3b6455b5467013514d3ca22df554ac3eb4c98791e10",
+    "arms": [
+      "rope"
+    ],
+    "runs_requested": 1,
+    "model": "claude-sonnet-4-6",
+    "temperature": "API default",
+    "concurrency": 1,
+    "case_ids": [
+      "extract-function/parking-fee",
+      "extract-function/shipping-quote",
+      "guard-clauses/discount-eligibility",
+      "guard-clauses/ticket-refund",
+      "inline-function/log-parser",
+      "inline-function/loyalty-ledger",
+      "introduce-parameter-object/invoice-line",
+      "introduce-parameter-object/room-booking",
+      "rename/csv-cleaner",
+      "rename/meeting-slots",
+      "replace-magic-literal/late-fees",
+      "replace-magic-literal/temperature-alerts"
+    ],
+    "versions": {
+      "python": "3.13.11",
+      "anthropic": "1.8.0",
+      "pydantic": "2.13.5",
+      "pytest": "9.1.1"
+    },
+    "pricing": {
+      "claude-sonnet-4-6": {
+        "usd_per_input_token": 3e-06,
+        "usd_per_output_token": 1.5e-05,
+        "usd_per_cache_write_token": 3.75e-06,
+        "usd_per_cache_read_token": 3e-07,
+        "source": "https://platform.claude.com/docs/en/about-claude/pricing",
+        "note": "$3 in, $15 out, $3.75 5m cache write, $0.30 cache read per MTok; read 2026-09-23"
+      }
+    }
+  },
+  "cases": {
+    "extract-function/parking-fee": {
+      "refactoring": "extract-function",
+      "deterministic_tool": "rope.refactor.extract.ExtractMethod",
+      "instruction": "In parking.py, extract the evening discount step of fee into a new module-level function evening_discount(base, entered_hour) that returns the discounted amount when the entry hour is 18 or later or before 6, and base unchanged otherwise. fee must call evening_discount and keep its signature fee(minutes, entered_hour) and its behavior. Do not change receipt or any other file."
+    },
+    "extract-function/shipping-quote": {
+      "refactoring": "extract-function",
+      "deterministic_tool": "rope.refactor.extract.ExtractMethod",
+      "instruction": "In shipping.py, extract the two input checks at the top of quote (the unknown zone check and the positive weight check, in that order, with the same messages) into a new module-level function validate(weight_kg, zone) that returns None, and call it as the first statement of quote. Keep quote's signature and behavior. Do not change label or any other file."
+    },
+    "guard-clauses/discount-eligibility": {
+      "refactoring": "guard-clauses",
+      "deterministic_tool": null,
+      "instruction": "In discount.py, rewrite discount_rate using guard clauses: return 0.0 immediately when customer is None, then return 0.0 immediately when the customer is not active, then handle the remaining cases with early returns so that no if statement is nested inside another if. The first statement of the function must be a guard. Keep the signature discount_rate(customer, order_total, coupon) and the exact behavior. Do not change final_price or any other file."
+    },
+    "guard-clauses/ticket-refund": {
+      "refactoring": "guard-clauses",
+      "deterministic_tool": null,
+      "instruction": "In refund.py, rewrite refund_amount using guard clauses: return 0.0 immediately when ticket is None, then return 0.0 immediately when the ticket is used, then handle the remaining cases with early returns so that no if statement is nested inside another if. The first statement of the function must be a guard. Keep the signature refund_amount(ticket, days_before_event) and the exact behavior. Do not change refund_message or any other file."
+    },
+    "inline-function/log-parser": {
+      "refactoring": "inline-function",
+      "deterministic_tool": "rope.refactor.inline.InlineMethod",
+      "instruction": "In logparse.py, inline the helper _is_level into its only caller parse_line, so the membership test appears directly in parse_line, and delete _is_level. Keep parse_line's signature and behavior. Do not change count_levels or any other file."
+    },
+    "inline-function/loyalty-ledger": {
+      "refactoring": "inline-function",
+      "deterministic_tool": "rope.refactor.inline.InlineMethod",
+      "instruction": "In loyalty.py, inline the module-level helper _points_for into its only caller Ledger.purchase, so the points calculation appears directly in purchase, and delete _points_for. Keep Ledger's public methods and behavior. Do not change Ledger.__init__, Ledger.redeem, or any other file."
+    },
+    "introduce-parameter-object/invoice-line": {
+      "refactoring": "introduce-parameter-object",
+      "deterministic_tool": null,
+      "instruction": "In invoice.py, introduce a dataclass Line with fields unit_price: float, quantity: int, discount_pct: float (in that order), and change line_total(unit_price, quantity, discount_pct) to line_total(line) taking one Line. invoice_total now receives a list of Line objects. describe keeps its signature describe(unit_price, quantity, discount_pct) and builds a Line to call line_total. Update tests/test_invoice.py to construct Line objects. Change nothing else."
+    },
+    "introduce-parameter-object/room-booking": {
+      "refactoring": "introduce-parameter-object",
+      "deterministic_tool": null,
+      "instruction": "In booking.py, introduce a dataclass Stay with fields room_type: str, nights: int, guests: int, breakfast: bool (in that order), and change quote(room_type, nights, guests, breakfast) to quote(stay) taking one Stay. cheapest keeps its signature cheapest(nights, guests, breakfast) and builds a Stay for each room it compares. Update tests/test_booking.py to construct Stay objects. Change nothing else."
+    },
+    "rename/csv-cleaner": {
+      "refactoring": "rename",
+      "deterministic_tool": "rope.refactor.rename.Rename",
+      "instruction": "In cleaner.py, rename the function clean_hdr to normalize_header, updating its definition and the call in clean_headers. Update tests/test_cleaner.py to use the new name. Change nothing else."
+    },
+    "rename/meeting-slots": {
+      "refactoring": "rename",
+      "deterministic_tool": "rope.refactor.rename.Rename",
+      "instruction": "In slots.py, rename the function find_gaps to free_slots, and rename the parameter min_len to min_minutes in both find_gaps and first_gap, updating every use including the docstring and the call in first_gap. Update tests/test_slots.py to use the new names. Change nothing else."
+    },
+    "replace-magic-literal/late-fees": {
+      "refactoring": "replace-magic-literal",
+      "deterministic_tool": null,
+      "instruction": "In fees.py, replace the magic numbers in late_fee with three module-level constants defined before late_fee: DVD_DAILY = 1.0, BOOK_DAILY = 0.25, and MAX_FEE = 15.0, and use them in late_fee in place of the literals (the 0 comparison and the 0.0 return stay as they are). Keep late_fee's signature and behavior. Do not change statement or any other file."
+    },
+    "replace-magic-literal/temperature-alerts": {
+      "refactoring": "replace-magic-literal",
+      "deterministic_tool": null,
+      "instruction": "In alerts.py, replace the magic numbers in status with two module-level constants defined before status: CRITICAL_C = 85 and WARNING_C = 70, and use them in status in place of the literals. Keep status's signature and behavior. Do not change summarize or any other file."
+    }
+  },
+  "trials": {
+    "rope/extract-function/parking-fee/0": {
+      "arm_name": "rope",
+      "case_id": "extract-function/parking-fee",
+      "run": 0,
+      "arm": {
+        "ok": true,
+        "latency_ms": 59.30758302565664,
+        "model": "rope",
+        "request_id": null,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_creation_input_tokens": null,
+        "cache_read_input_tokens": null,
+        "stop_reason": null,
+        "files_written": [
+          "parking.py"
+        ],
+        "error": null,
+        "extra": {
+          "total_cost_usd": 0.0,
+          "steps": 1
+        }
+      },
+      "verdict": {
+        "case_id": "extract-function/parking-fee",
+        "candidate": "/Users/kam/development/git_clones/refactoring-oracle/runs/work/rope/extract-function/parking-fee/0",
+        "compiles": true,
+        "behavior": false,
+        "shape": false,
+        "collateral": true,
+        "overall": false,
+        "failure_class": "behavior",
+        "details": {
+          "compiles": {
+            "ok": true,
+            "errors": []
+          },
+          "behavior": {
+            "ok": false,
+            "summary": "1 failed, 4 passed in 0.04s",
+            "first_failure": "FAILED ../../../../../../../../var/folders/xv/_sc7cm6s137dq8gp93902gzm0000gn/T/ro-xnvfjw0k/cand/test_parking.py::test_evening_discount_function",
+            "returncode": 1,
+            "timed_out": false
+          },
+          "shape": [
+            {
+              "ok": false,
+              "message": "evening_discount params are ['entered_hour', 'base'], want ['base', 'entered_hour']",
+              "assertion": "defines_function parking.py name='evening_discount' params=['base', 'entered_hour']"
+            },
+            {
+              "ok": true,
+              "message": "fee calls evening_discount",
+              "assertion": "calls parking.py callee='evening_discount' inside='fee'"
+            },
+            {
+              "ok": true,
+              "message": "fee defined",
+              "assertion": "defines_function parking.py name='fee' params=['minutes', 'entered_hour']"
+            }
+          ],
+          "collateral": []
+        }
+      },
+      "diff": "--- before/parking.py\n+++ candidate/parking.py\n@@ -9,6 +9,10 @@\n     base = hours * HOURLY\n     if base > DAILY_CAP:\n         base = DAILY_CAP\n+    base = evening_discount(entered_hour, base)\n+    return base\n+\n+def evening_discount(entered_hour, base):\n     if entered_hour >= 18 or entered_hour < 6:\n         base = round(base * 0.8, 2)\n     return base\n"
+    },
+    "rope/extract-function/shipping-quote/0": {
+      "arm_name": "rope",
+      "case_id": "extract-function/shipping-quote",
+      "run": 0,
+      "arm": {
+        "ok": true,
+        "latency_ms": 3.661791910417378,
+        "model": "rope",
+        "request_id": null,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_creation_input_tokens": null,
+        "cache_read_input_tokens": null,
+        "stop_reason": null,
+        "files_written": [
+          "shipping.py"
+        ],
+        "error": null,
+        "extra": {
+          "total_cost_usd": 0.0,
+          "steps": 1
+        }
+      },
+      "verdict": {
+        "case_id": "extract-function/shipping-quote",
+        "candidate": "/Users/kam/development/git_clones/refactoring-oracle/runs/work/rope/extract-function/shipping-quote/0",
+        "compiles": true,
+        "behavior": false,
+        "shape": false,
+        "collateral": true,
+        "overall": false,
+        "failure_class": "behavior",
+        "details": {
+          "compiles": {
+            "ok": true,
+            "errors": []
+          },
+          "behavior": {
+            "ok": false,
+            "summary": "1 failed, 5 passed in 0.04s",
+            "first_failure": "FAILED ../../../../../../../../var/folders/xv/_sc7cm6s137dq8gp93902gzm0000gn/T/ro-h19esopf/cand/test_shipping.py::test_validate_function",
+            "returncode": 1,
+            "timed_out": false
+          },
+          "shape": [
+            {
+              "ok": false,
+              "message": "validate params are ['zone', 'weight_kg'], want ['weight_kg', 'zone']",
+              "assertion": "defines_function shipping.py name='validate' params=['weight_kg', 'zone']"
+            },
+            {
+              "ok": true,
+              "message": "quote calls validate",
+              "assertion": "calls shipping.py callee='validate' inside='quote'"
+            },
+            {
+              "ok": true,
+              "message": "quote defined",
+              "assertion": "defines_function shipping.py name='quote' params=['weight_kg', 'zone', 'express']"
+            }
+          ],
+          "collateral": []
+        }
+      },
+      "diff": "--- before/shipping.py\n+++ candidate/shipping.py\n@@ -4,10 +4,7 @@\n \n \n def quote(weight_kg, zone, express):\n-    if zone not in ZONE_RATES:\n-        raise ValueError(f\"unknown zone {zone!r}\")\n-    if weight_kg <= 0:\n-        raise ValueError(\"weight must be positive\")\n+    validate(zone, weight_kg)\n     base = 4.0 + 1.25 * weight_kg\n     if weight_kg > 20:\n         base += (weight_kg - 20) * 0.5\n@@ -16,6 +13,12 @@\n         price = price * 1.5 + 2.0\n     return round(price, 2)\n \n+def validate(zone, weight_kg):\n+    if zone not in ZONE_RATES:\n+        raise ValueError(f\"unknown zone {zone!r}\")\n+    if weight_kg <= 0:\n+        raise ValueError(\"weight must be positive\")\n+\n \n def label(weight_kg, zone, express):\n     tag = \"EXPRESS\" if express else \"STANDARD\"\n"
+    },
+    "rope/guard-clauses/discount-eligibility/0": {
+      "arm_name": "rope",
+      "case_id": "guard-clauses/discount-eligibility",
+      "run": 0,
+      "arm": {
+        "ok": false,
+        "latency_ms": 0.0,
+        "model": "rope",
+        "request_id": null,
+        "input_tokens": null,
+        "output_tokens": null,
+        "cache_creation_input_tokens": null,
+        "cache_read_input_tokens": null,
+        "stop_reason": null,
+        "files_written": [],
+        "error": "no rope refactoring for guard-clauses",
+        "extra": {
+          "unsupported": true
+        }
+      },
+      "verdict": {
+        "overall": false,
+        "failure_class": "unsupported"
+      },
+      "diff": null
+    },
+    "rope/guard-clauses/ticket-refund/0": {
+      "arm_name": "rope",
+      "case_id": "guard-clauses/ticket-refund",
+      "run": 0,
+      "arm": {
+        "ok": false,
+        "latency_ms": 0.0,
+        "model": "rope",
+        "request_id": null,
+        "input_tokens": null,
+        "output_tokens": null,
+        "cache_creation_input_tokens": null,
+        "cache_read_input_tokens": null,
+        "stop_reason": null,
+        "files_written": [],
+        "error": "no rope refactoring for guard-clauses",
+        "extra": {
+          "unsupported": true
+        }
+      },
+      "verdict": {
+        "overall": false,
+        "failure_class": "unsupported"
+      },
+      "diff": null
+    },
+    "rope/inline-function/log-parser/0": {
+      "arm_name": "rope",
+      "case_id": "inline-function/log-parser",
+      "run": 0,
+      "arm": {
+        "ok": true,
+        "latency_ms": 5.3776249988004565,
+        "model": "rope",
+        "request_id": null,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_creation_input_tokens": null,
+        "cache_read_input_tokens": null,
+        "stop_reason": null,
+        "files_written": [
+          "logparse.py"
+        ],
+        "error": null,
+        "extra": {
+          "total_cost_usd": 0.0,
+          "steps": 1
+        }
+      },
+      "verdict": {
+        "case_id": "inline-function/log-parser",
+        "candidate": "/Users/kam/development/git_clones/refactoring-oracle/runs/work/rope/inline-function/log-parser/0",
+        "compiles": true,
+        "behavior": true,
+        "shape": true,
+        "collateral": true,
+        "overall": true,
+        "failure_class": "none",
+        "details": {
+          "compiles": {
+            "ok": true,
+            "errors": []
+          },
+          "behavior": {
+            "ok": true,
+            "summary": "4 passed in 0.03s",
+            "first_failure": null,
+            "returncode": 0,
+            "timed_out": false
+          },
+          "shape": [
+            {
+              "ok": true,
+              "message": "_is_level not defined",
+              "assertion": "not_defines logparse.py name='_is_level'"
+            },
+            {
+              "ok": true,
+              "message": "logparse.py does not call _is_level",
+              "assertion": "no_call logparse.py callee='_is_level'"
+            },
+            {
+              "ok": true,
+              "message": "parse_line defined",
+              "assertion": "defines_function logparse.py name='parse_line' params=['line']"
+            }
+          ],
+          "collateral": []
+        }
+      },
+      "diff": "--- before/logparse.py\n+++ candidate/logparse.py\n@@ -3,13 +3,9 @@\n LEVELS = (\"DEBUG\", \"INFO\", \"WARN\", \"ERROR\")\n \n \n-def _is_level(token):\n-    return token in LEVELS\n-\n-\n def parse_line(line):\n     head, _, rest = line.partition(\" \")\n-    if _is_level(head):\n+    if head in LEVELS:\n         return {\"level\": head, \"message\": rest.strip()}\n     return {\"level\": \"INFO\", \"message\": line.strip()}\n \n"
+    },
+    "rope/inline-function/loyalty-ledger/0": {
+      "arm_name": "rope",
+      "case_id": "inline-function/loyalty-ledger",
+      "run": 0,
+      "arm": {
+        "ok": true,
+        "latency_ms": 5.056207999587059,
+        "model": "rope",
+        "request_id": null,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_creation_input_tokens": null,
+        "cache_read_input_tokens": null,
+        "stop_reason": null,
+        "files_written": [
+          "loyalty.py"
+        ],
+        "error": null,
+        "extra": {
+          "total_cost_usd": 0.0,
+          "steps": 1
+        }
+      },
+      "verdict": {
+        "case_id": "inline-function/loyalty-ledger",
+        "candidate": "/Users/kam/development/git_clones/refactoring-oracle/runs/work/rope/inline-function/loyalty-ledger/0",
+        "compiles": true,
+        "behavior": true,
+        "shape": true,
+        "collateral": true,
+        "overall": true,
+        "failure_class": "none",
+        "details": {
+          "compiles": {
+            "ok": true,
+            "errors": []
+          },
+          "behavior": {
+            "ok": true,
+            "summary": "2 passed in 0.03s",
+            "first_failure": null,
+            "returncode": 0,
+            "timed_out": false
+          },
+          "shape": [
+            {
+              "ok": true,
+              "message": "_points_for not defined",
+              "assertion": "not_defines loyalty.py name='_points_for'"
+            },
+            {
+              "ok": true,
+              "message": "loyalty.py does not call _points_for",
+              "assertion": "no_call loyalty.py callee='_points_for'"
+            },
+            {
+              "ok": true,
+              "message": "Ledger.purchase defined",
+              "assertion": "defines_function loyalty.py name='Ledger.purchase' params=['self', 'amount']"
+            }
+          ],
+          "collateral": []
+        }
+      },
+      "diff": "--- before/loyalty.py\n+++ candidate/loyalty.py\n@@ -1,10 +1,6 @@\n \"\"\"Loyalty points ledger.\"\"\"\n \n POINTS_PER_DOLLAR = 2\n-\n-\n-def _points_for(amount):\n-    return int(amount) * POINTS_PER_DOLLAR\n \n \n class Ledger:\n@@ -13,7 +9,7 @@\n         self.history = []\n \n     def purchase(self, amount):\n-        earned = _points_for(amount)\n+        earned = int(amount) * POINTS_PER_DOLLAR\n         self.balance += earned\n         self.history.append((\"earn\", earned))\n         return earned\n"
+    },
+    "rope/introduce-parameter-object/invoice-line/0": {
+      "arm_name": "rope",
+      "case_id": "introduce-parameter-object/invoice-line",
+      "run": 0,
+      "arm": {
+        "ok": false,
+        "latency_ms": 0.0,
+        "model": "rope",
+        "request_id": null,
+        "input_tokens": null,
+        "output_tokens": null,
+        "cache_creation_input_tokens": null,
+        "cache_read_input_tokens": null,
+        "stop_reason": null,
+        "files_written": [],
+        "error": "no rope refactoring for introduce-parameter-object",
+        "extra": {
+          "unsupported": true
+        }
+      },
+      "verdict": {
+        "overall": false,
+        "failure_class": "unsupported"
+      },
+      "diff": null
+    },
+    "rope/introduce-parameter-object/room-booking/0": {
+      "arm_name": "rope",
+      "case_id": "introduce-parameter-object/room-booking",
+      "run": 0,
+      "arm": {
+        "ok": false,
+        "latency_ms": 0.0,
+        "model": "rope",
+        "request_id": null,
+        "input_tokens": null,
+        "output_tokens": null,
+        "cache_creation_input_tokens": null,
+        "cache_read_input_tokens": null,
+        "stop_reason": null,
+        "files_written": [],
+        "error": "no rope refactoring for introduce-parameter-object",
+        "extra": {
+          "unsupported": true
+        }
+      },
+      "verdict": {
+        "overall": false,
+        "failure_class": "unsupported"
+      },
+      "diff": null
+    },
+    "rope/rename/csv-cleaner/0": {
+      "arm_name": "rope",
+      "case_id": "rename/csv-cleaner",
+      "run": 0,
+      "arm": {
+        "ok": true,
+        "latency_ms": 9.004375082440674,
+        "model": "rope",
+        "request_id": null,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_creation_input_tokens": null,
+        "cache_read_input_tokens": null,
+        "stop_reason": null,
+        "files_written": [
+          "cleaner.py",
+          "tests/test_cleaner.py"
+        ],
+        "error": null,
+        "extra": {
+          "total_cost_usd": 0.0,
+          "steps": 1
+        }
+      },
+      "verdict": {
+        "case_id": "rename/csv-cleaner",
+        "candidate": "/Users/kam/development/git_clones/refactoring-oracle/runs/work/rope/rename/csv-cleaner/0",
+        "compiles": true,
+        "behavior": true,
+        "shape": true,
+        "collateral": true,
+        "overall": true,
+        "failure_class": "none",
+        "details": {
+          "compiles": {
+            "ok": true,
+            "errors": []
+          },
+          "behavior": {
+            "ok": true,
+            "summary": "2 passed in 0.03s",
+            "first_failure": null,
+            "returncode": 0,
+            "timed_out": false
+          },
+          "shape": [
+            {
+              "ok": true,
+              "message": "identifier clean_hdr absent",
+              "assertion": "name_absent cleaner.py name='clean_hdr'"
+            },
+            {
+              "ok": true,
+              "message": "normalize_header defined",
+              "assertion": "defines_function cleaner.py name='normalize_header' params=['raw']"
+            },
+            {
+              "ok": true,
+              "message": "clean_headers calls normalize_header",
+              "assertion": "calls cleaner.py callee='normalize_header' inside='clean_headers'"
+            }
+          ],
+          "collateral": []
+        }
+      },
+      "diff": "--- before/cleaner.py\n+++ candidate/cleaner.py\n@@ -3,7 +3,7 @@\n import re\n \n \n-def clean_hdr(raw):\n+def normalize_header(raw):\n     \"\"\"Lowercase, strip, and collapse runs of non-alphanumerics into one underscore.\"\"\"\n     text = raw.strip().lower()\n     text = re.sub(r\"[^a-z0-9]+\", \"_\", text)\n@@ -14,7 +14,7 @@\n     seen = {}\n     out = []\n     for raw in raw_headers:\n-        name = clean_hdr(raw)\n+        name = normalize_header(raw)\n         if name in seen:\n             seen[name] += 1\n             name = f\"{name}_{seen[name]}\"\n--- before/tests/test_cleaner.py\n+++ candidate/tests/test_cleaner.py\n@@ -1,10 +1,10 @@\n-from cleaner import clean_hdr, clean_headers\n+from cleaner import normalize_header, clean_headers\n \n \n def test_clean_hdr():\n-    assert clean_hdr(\"  Order ID \") == \"order_id\"\n-    assert clean_hdr(\"Price (USD)\") == \"price_usd\"\n-    assert clean_hdr(\"***\") == \"column\"\n+    assert normalize_header(\"  Order ID \") == \"order_id\"\n+    assert normalize_header(\"Price (USD)\") == \"price_usd\"\n+    assert normalize_header(\"***\") == \"column\"\n \n \n def test_duplicates_get_suffixes():\n"
+    },
+    "rope/rename/meeting-slots/0": {
+      "arm_name": "rope",
+      "case_id": "rename/meeting-slots",
+      "run": 0,
+      "arm": {
+        "ok": true,
+        "latency_ms": 10.56187495123595,
+        "model": "rope",
+        "request_id": null,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_creation_input_tokens": null,
+        "cache_read_input_tokens": null,
+        "stop_reason": null,
+        "files_written": [
+          "slots.py",
+          "tests/test_slots.py"
+        ],
+        "error": null,
+        "extra": {
+          "total_cost_usd": 0.0,
+          "steps": 3
+        }
+      },
+      "verdict": {
+        "case_id": "rename/meeting-slots",
+        "candidate": "/Users/kam/development/git_clones/refactoring-oracle/runs/work/rope/rename/meeting-slots/0",
+        "compiles": true,
+        "behavior": true,
+        "shape": true,
+        "collateral": true,
+        "overall": true,
+        "failure_class": "none",
+        "details": {
+          "compiles": {
+            "ok": true,
+            "errors": []
+          },
+          "behavior": {
+            "ok": true,
+            "summary": "4 passed in 0.03s",
+            "first_failure": null,
+            "returncode": 0,
+            "timed_out": false
+          },
+          "shape": [
+            {
+              "ok": true,
+              "message": "identifier find_gaps absent",
+              "assertion": "name_absent slots.py name='find_gaps'"
+            },
+            {
+              "ok": true,
+              "message": "identifier min_len absent",
+              "assertion": "name_absent slots.py name='min_len'"
+            },
+            {
+              "ok": true,
+              "message": "free_slots defined",
+              "assertion": "defines_function slots.py name='free_slots' params=['busy', 'min_minutes']"
+            },
+            {
+              "ok": true,
+              "message": "first_gap defined",
+              "assertion": "defines_function slots.py name='first_gap' params=['busy', 'min_minutes']"
+            },
+            {
+              "ok": true,
+              "message": "first_gap calls free_slots",
+              "assertion": "calls slots.py callee='free_slots' inside='first_gap'"
+            }
+          ],
+          "collateral": []
+        }
+      },
+      "diff": "--- before/slots.py\n+++ candidate/slots.py\n@@ -4,19 +4,19 @@\n DAY_END = 17 * 60\n \n \n-def find_gaps(busy, min_len):\n-    \"\"\"Free [start, end) intervals at least min_len minutes long.\"\"\"\n+def free_slots(busy, min_minutes):\n+    \"\"\"Free [start, end) intervals at least min_minutes minutes long.\"\"\"\n     gaps = []\n     cursor = DAY_START\n     for start, end in sorted(busy):\n-        if start - cursor >= min_len:\n+        if start - cursor >= min_minutes:\n             gaps.append((cursor, start))\n         cursor = max(cursor, end)\n-    if DAY_END - cursor >= min_len:\n+    if DAY_END - cursor >= min_minutes:\n         gaps.append((cursor, DAY_END))\n     return gaps\n \n \n-def first_gap(busy, min_len):\n-    gaps = find_gaps(busy, min_len)\n+def first_gap(busy, min_minutes):\n+    gaps = free_slots(busy, min_minutes)\n     return gaps[0] if gaps else None\n--- before/tests/test_slots.py\n+++ candidate/tests/test_slots.py\n@@ -1,14 +1,14 @@\n-from slots import find_gaps, first_gap\n+from slots import free_slots, first_gap\n \n BUSY = [(600, 660), (720, 780)]\n \n \n def test_gaps_between_meetings():\n-    assert find_gaps(BUSY, 30) == [(540, 600), (660, 720), (780, 1020)]\n+    assert free_slots(BUSY, 30) == [(540, 600), (660, 720), (780, 1020)]\n \n \n def test_min_len_filters_short_gaps():\n-    assert find_gaps(BUSY, 90) == [(780, 1020)]\n+    assert free_slots(BUSY, 90) == [(780, 1020)]\n \n \n def test_first_gap_and_none():\n@@ -17,4 +17,4 @@\n \n \n def test_gap_exactly_min_length_counts():\n-    assert find_gaps(BUSY, 240) == [(780, 1020)]\n+    assert free_slots(BUSY, 240) == [(780, 1020)]\n"
+    },
+    "rope/replace-magic-literal/late-fees/0": {
+      "arm_name": "rope",
+      "case_id": "replace-magic-literal/late-fees",
+      "run": 0,
+      "arm": {
+        "ok": false,
+        "latency_ms": 0.0,
+        "model": "rope",
+        "request_id": null,
+        "input_tokens": null,
+        "output_tokens": null,
+        "cache_creation_input_tokens": null,
+        "cache_read_input_tokens": null,
+        "stop_reason": null,
+        "files_written": [],
+        "error": "no rope refactoring for replace-magic-literal",
+        "extra": {
+          "unsupported": true
+        }
+      },
+      "verdict": {
+        "overall": false,
+        "failure_class": "unsupported"
+      },
+      "diff": null
+    },
+    "rope/replace-magic-literal/temperature-alerts/0": {
+      "arm_name": "rope",
+      "case_id": "replace-magic-literal/temperature-alerts",
+      "run": 0,
+      "arm": {
+        "ok": false,
+        "latency_ms": 0.0,
+        "model": "rope",
+        "request_id": null,
+        "input_tokens": null,
+        "output_tokens": null,
+        "cache_creation_input_tokens": null,
+        "cache_read_input_tokens": null,
+        "stop_reason": null,
+        "files_written": [],
+        "error": "no rope refactoring for replace-magic-literal",
+        "extra": {
+          "unsupported": true
+        }
+      },
+      "verdict": {
+        "overall": false,
+        "failure_class": "unsupported"
+      },
+      "diff": null
+    }
+  },
+  "summary": {
+    "per_arm": {
+      "rope": {
+        "trials": 12,
+        "none": 4,
+        "compiles": 0,
+        "behavior": 2,
+        "shape": 0,
+        "collateral": 0,
+        "arm_error": 0,
+        "unsupported": 6,
+        "pass_rate": 0.3333333333333333
+      }
+    },
+    "per_arm_refactoring": {
+      "rope": {
+        "extract-function": {
+          "trials": 2,
+          "none": 0,
+          "compiles": 0,
+          "behavior": 2,
+          "shape": 0,
+          "collateral": 0,
+          "arm_error": 0,
+          "unsupported": 0
+        },
+        "guard-clauses": {
+          "trials": 2,
+          "none": 0,
+          "compiles": 0,
+          "behavior": 0,
+          "shape": 0,
+          "collateral": 0,
+          "arm_error": 0,
+          "unsupported": 2
+        },
+        "inline-function": {
+          "trials": 2,
+          "none": 2,
+          "compiles": 0,
+          "behavior": 0,
+          "shape": 0,
+          "collateral": 0,
+          "arm_error": 0,
+          "unsupported": 0
+        },
+        "introduce-parameter-object": {
+          "trials": 2,
+          "none": 0,
+          "compiles": 0,
+          "behavior": 0,
+          "shape": 0,
+          "collateral": 0,
+          "arm_error": 0,
+          "unsupported": 2
+        },
+        "rename": {
+          "trials": 2,
+          "none": 2,
+          "compiles": 0,
+          "behavior": 0,
+          "shape": 0,
+          "collateral": 0,
+          "arm_error": 0,
+          "unsupported": 0
+        },
+        "replace-magic-literal": {
+          "trials": 2,
+          "none": 0,
+          "compiles": 0,
+          "behavior": 0,
+          "shape": 0,
+          "collateral": 0,
+          "arm_error": 0,
+          "unsupported": 2
+        }
+      }
+    },
+    "per_arm_case": {
+      "rope": {
+        "extract-function/parking-fee": [
+          "behavior"
+        ],
+        "extract-function/shipping-quote": [
+          "behavior"
+        ],
+        "guard-clauses/discount-eligibility": [
+          "unsupported"
+        ],
+        "guard-clauses/ticket-refund": [
+          "unsupported"
+        ],
+        "inline-function/log-parser": [
+          "none"
+        ],
+        "inline-function/loyalty-ledger": [
+          "none"
+        ],
+        "introduce-parameter-object/invoice-line": [
+          "unsupported"
+        ],
+        "introduce-parameter-object/room-booking": [
+          "unsupported"
+        ],
+        "rename/csv-cleaner": [
+          "none"
+        ],
+        "rename/meeting-slots": [
+          "none"
+        ],
+        "replace-magic-literal/late-fees": [
+          "unsupported"
+        ],
+        "replace-magic-literal/temperature-alerts": [
+          "unsupported"
+        ]
+      }
+    },
+    "repeatability": {
+      "rope": {
+        "cases": 12,
+        "same_outcome_every_run": 12,
+        "passed_every_run": 4,
+        "passed_at_least_once": 4
+      }
+    },
+    "usage": {
+      "rope": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "calls": 6,
+        "total_usd": 0.0,
+        "cost_source": "claude --output-format json total_cost_usd"
+      }
+    },
+    "cost_per_trial": {
+      "rope": 0.0
+    },
+    "latency": {
+      "rope": {
+        "mean": 15.49490966135636,
+        "median": 9.004375082440674,
+        "max": 59.30758302565664,
+        "n": 6
+      }
+    }
+  }
+}

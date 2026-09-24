@@ -112,6 +112,10 @@ def make_arms(cfg: RunConfig) -> dict[str, Arm]:
             out[name] = ApiArm(with_skill=False, model=cfg.model)
         elif name == "api-skill":
             out[name] = ApiArm(with_skill=True, model=cfg.model)
+        elif name == "rope":
+            from refactoring_oracle.arms.rope_arm import RopeArm
+
+            out[name] = RopeArm()
         elif name in ("agent-bare", "agent-skill"):
             from refactoring_oracle.arms.agent import AgentArm
 
@@ -178,6 +182,9 @@ def run(cfg: RunConfig) -> dict[str, Any]:
                     trial["verdict"] = verdict.model_dump()
                     trial["diff"] = _diff(case, workdir)
                     mark = "." if verdict.overall else verdict.failure_class[0]
+                elif arm_result.extra.get("unsupported"):
+                    trial["verdict"] = {"overall": False, "failure_class": "unsupported"}
+                    mark = "u"
                 else:
                     trial["verdict"] = {"overall": False, "failure_class": "arm_error"}
                     mark = "x"
@@ -195,7 +202,7 @@ def run(cfg: RunConfig) -> dict[str, Any]:
     return artifact
 
 
-CLASSES = ("none", "compiles", "behavior", "shape", "collateral", "arm_error")
+CLASSES = ("none", "compiles", "behavior", "shape", "collateral", "arm_error", "unsupported")
 
 
 def summarize(artifact: dict[str, Any]) -> dict[str, Any]:

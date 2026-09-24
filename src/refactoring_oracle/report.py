@@ -7,7 +7,7 @@ from typing import Any
 from refactoring_oracle.runner import CLASSES
 
 SHORT = {"none": "pass", "compiles": "comp", "behavior": "beh", "shape": "shape",
-         "collateral": "coll", "arm_error": "err"}
+         "collateral": "coll", "arm_error": "err", "unsupported": "n/a"}
 
 
 def render(artifact: dict[str, Any]) -> str:

@@ -115,7 +115,7 @@ def run_main(argv: list[str] | None = None) -> int:
     load_dotenv()
     p = argparse.ArgumentParser(prog="ro-run", description="Run arms over the frozen cases.")
     p.add_argument("--arms", default="api-bare,api-skill",
-                   help="comma-separated: api-bare, api-skill, agent-bare, agent-skill")
+                   help="comma-separated: api-bare, api-skill, agent-bare, agent-skill, rope")
     p.add_argument("--runs", type=int, default=int(os.environ.get("RO_RUNS", "3")))
     p.add_argument("--out", type=Path, default=Path("runs/api-results.json"))
     p.add_argument("--cases", default=None, help="comma-separated case ids")

@@ -1,0 +1,37 @@
+refactoring-oracle run  status=complete  dry_run=False  model=claude-sonnet-4-6  runs=1
+  cases sha aad22de619bc  prompt sha 4731e71ff709  skills sha f7767d581508  commit 8c9eb6252150
+
+Per case, outcome of each run (pass, or the first failing check)
+case                                       tool                  rope
+---------------------------------------------------------------------
+extract-function/parking-fee               rope                   beh
+extract-function/shipping-quote            rope                   beh
+guard-clauses/discount-eligibility         -                      n/a
+guard-clauses/ticket-refund                -                      n/a
+inline-function/log-parser                 rope                  pass
+inline-function/loyalty-ledger             rope                  pass
+introduce-parameter-object/invoice-line    -                      n/a
+introduce-parameter-object/room-booking    -                      n/a
+rename/csv-cleaner                         rope                  pass
+rename/meeting-slots                       rope                  pass
+replace-magic-literal/late-fees            -                      n/a
+replace-magic-literal/temperature-alerts   -                      n/a
+
+Per arm
+  arm        trials   pass   comp    beh  shape   coll    err    n/a   pass rate
+  rope           12      4      0      2      0      0      0      6    33.3%
+
+Per arm and refactoring: pass / trials
+  refactoring                        rope
+  extract-function                0/2    
+  guard-clauses                   0/2    
+  inline-function                 2/2    
+  introduce-parameter-object      0/2    
+  rename                          2/2    
+  replace-magic-literal           0/2    
+
+Repeatability (per case across runs)
+  rope       same outcome every run 12/12, passed every run 4/12, passed at least once 4/12
+
+Cost and latency per trial
+  rope        $0.0000 per trial, $0.00 total over 6 calls; 0 in / 0 out tokens; mean 15 ms, max 59 ms
