@@ -7,3 +7,5 @@ dist/
 *.egg-info/
 .env
 .DS_Store
+runs/work/
+runs/*.tmp

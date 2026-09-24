@@ -7,9 +7,10 @@ import json
 import sys
 from pathlib import Path
 
-from refactoring_oracle import freeze
+from refactoring_oracle import freeze, report
 from refactoring_oracle.case import CASES_ROOT, find_case, load_all
 from refactoring_oracle.oracle import expected_failure_class, grade
+from refactoring_oracle.runner import RunConfig, run
 
 
 def grade_main(argv: list[str] | None = None) -> int:
@@ -92,3 +93,57 @@ def freeze_main(argv: list[str] | None = None) -> int:
     digest = freeze.freeze()
     print(f"froze cases/: sha256 {digest}")
     return 0
+
+
+def load_dotenv(path: Path = CASES_ROOT.parent / ".env") -> None:
+    """Minimal .env loader: KEY=VALUE lines, environment wins."""
+    import os
+
+    if not path.exists():
+        return
+    for line in path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, value = line.partition("=")
+        os.environ.setdefault(key.strip(), value.strip().strip("'\""))
+
+
+def run_main(argv: list[str] | None = None) -> int:
+    import os
+
+    load_dotenv()
+    p = argparse.ArgumentParser(prog="ro-run", description="Run arms over the frozen cases.")
+    p.add_argument("--arms", default="api-bare,api-skill")
+    p.add_argument("--runs", type=int, default=int(os.environ.get("RO_RUNS", "3")))
+    p.add_argument("--out", type=Path, default=Path("runs/api-results.json"))
+    p.add_argument("--cases", default=None, help="comma-separated case ids")
+    p.add_argument("--resume", action="store_true")
+    p.add_argument("--dry-run", action="store_true", help="reference arm, no network")
+    p.add_argument("--model", default=os.environ.get("RO_MODEL", "claude-sonnet-4-6"))
+    p.add_argument("--allow-drift", action="store_true")
+    p.add_argument("--report-only", action="store_true")
+    args = p.parse_args(argv)
+    if args.report_only:
+        sys.stdout.write(report.render(json.loads(args.out.read_text(encoding="utf-8"))))
+        return 0
+    arms = [a.strip() for a in args.arms.split(",") if a.strip()]
+    if not args.dry_run and not os.environ.get("ANTHROPIC_API_KEY"):
+        print("ANTHROPIC_API_KEY is required", file=sys.stderr)
+        return 2
+    cfg = RunConfig(
+        arms=arms, runs=args.runs, out=args.out, resume=args.resume,
+        case_ids=[c.strip() for c in args.cases.split(",")] if args.cases else None,
+        dry_run=args.dry_run, model=args.model, allow_drift=args.allow_drift,
+        progress=lambda s: (sys.stderr.write(s), sys.stderr.flush()),
+    )
+    print(f"arms={','.join(arms)} runs={cfg.runs} model={cfg.model} out={cfg.out} "
+          f"dry_run={cfg.dry_run} resume={cfg.resume}", file=sys.stderr)
+    try:
+        artifact = run(cfg)
+    except freeze.FixtureDrift as exc:
+        print(f"refusing to run: {exc}", file=sys.stderr)
+        return 2
+    sys.stdout.write(report.render(artifact))
+    errors = sum(1 for t in artifact["trials"].values() if t["arm"].get("error"))
+    return 1 if errors else 0
