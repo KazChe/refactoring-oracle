@@ -1,0 +1,40 @@
+refactoring-oracle run  status=complete  dry_run=False  model=claude-sonnet-4-6  runs=3
+  cases sha aad22de619bc  prompt sha 4731e71ff709  skills sha f7767d581508  commit 0abf5e6e1614
+
+Per case, outcome of each run (pass, or the first failing check)
+case                                       tool            agent-bare           agent-skill
+-------------------------------------------------------------------------------------------
+extract-function/parking-fee               rope        pass/pass/pass        pass/pass/pass
+extract-function/shipping-quote            rope        pass/pass/pass        pass/pass/pass
+guard-clauses/discount-eligibility         -           pass/pass/pass       pass/shape/pass
+guard-clauses/ticket-refund                -           pass/pass/pass        pass/pass/pass
+inline-function/log-parser                 rope        pass/pass/pass        pass/pass/pass
+inline-function/loyalty-ledger             rope        pass/pass/pass        pass/pass/pass
+introduce-parameter-object/invoice-line    -           pass/pass/pass        pass/pass/pass
+introduce-parameter-object/room-booking    -           pass/pass/pass        pass/pass/pass
+rename/csv-cleaner                         rope        pass/pass/pass        pass/pass/pass
+rename/meeting-slots                       rope        pass/pass/pass        pass/pass/pass
+replace-magic-literal/late-fees            -           pass/pass/pass        pass/pass/pass
+replace-magic-literal/temperature-alerts   -           pass/pass/pass        pass/pass/pass
+
+Per arm
+  arm        trials   pass   comp    beh  shape   coll    err   pass rate
+  agent-bare     36     36      0      0      0      0      0   100.0%
+  agent-skill     36     35      0      0      1      0      0    97.2%
+
+Per arm and refactoring: pass / trials
+  refactoring                  agent-bare  agent-skill
+  extract-function                6/6         6/6    
+  guard-clauses                   6/6         5/6    
+  inline-function                 6/6         6/6    
+  introduce-parameter-object      6/6         6/6    
+  rename                          6/6         6/6    
+  replace-magic-literal           6/6         6/6    
+
+Repeatability (per case across runs)
+  agent-bare same outcome every run 12/12, passed every run 12/12, passed at least once 12/12
+  agent-skill same outcome every run 11/12, passed every run 11/12, passed at least once 12/12
+
+Cost and latency per trial
+  agent-bare  $0.0278 per trial, $1.00 total over 36 calls; 242 in / 35288 out tokens; mean 19,252 ms, max 66,042 ms; mean turns 5.4
+  agent-skill $0.0278 per trial, $1.00 total over 36 calls; 239 in / 33213 out tokens; mean 20,964 ms, max 128,725 ms; mean turns 5.2
